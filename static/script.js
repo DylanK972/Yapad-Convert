@@ -1,88 +1,104 @@
 const uploadZone = document.getElementById("uploadZone");
 const fileInput = document.getElementById("fileInput");
-const fileInfo = document.getElementById("fileInfo");
-const preview = document.getElementById("preview");
-const fileName = document.getElementById("fileName");
-const fileType = document.getElementById("fileType");
-const options = document.getElementById("options");
-const convertForm = document.getElementById("convertForm");
+const fileList = document.getElementById("fileList");
 const result = document.getElementById("result");
-const formatHidden = document.getElementById("formatHidden");
+const themeToggle = document.getElementById("themeToggle");
 
-// Drag & drop support
-uploadZone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  uploadZone.style.borderColor = "#7b2ff7";
+// === Mode clair/sombre ===
+themeToggle.addEventListener("click", () => {
+  const current = document.body.dataset.theme;
+  document.body.dataset.theme = current === "dark" ? "light" : "dark";
+  themeToggle.textContent = current === "dark" ? "🌙 Mode sombre" : "☀️ Mode clair";
 });
-uploadZone.addEventListener("dragleave", () => {
-  uploadZone.style.borderColor = "#ccc";
-});
+
+// === Drag & drop ===
+uploadZone.addEventListener("dragover", (e) => e.preventDefault());
 uploadZone.addEventListener("drop", (e) => {
   e.preventDefault();
-  const file = e.dataTransfer.files[0];
-  handleFile(file);
+  handleFiles(e.dataTransfer.files);
 });
-fileInput.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  handleFile(file);
-});
+fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
 
-function handleFile(file) {
-  if (!file) return;
+function handleFiles(files) {
+  if (!files.length) return;
   uploadZone.classList.add("hidden");
-  fileInfo.classList.remove("hidden");
-
-  fileName.textContent = file.name;
-  fileType.textContent = `${file.type || "Fichier inconnu"} — ${(file.size / 1024).toFixed(1)} Ko`;
-
-  // Aperçu si image
-  if (file.type.startsWith("image/")) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      preview.innerHTML = `<img src="${reader.result}" alt="aperçu" />`;
-    };
-    reader.readAsDataURL(file);
-  } else {
-    preview.innerHTML = `<img src="https://img.icons8.com/color/96/file.png"/>`;
-  }
-
-  suggestConversions(file);
+  fileList.classList.remove("hidden");
+  result.innerHTML = "";
+  Array.from(files).forEach(showFileCard);
 }
 
-function suggestConversions(file) {
-  const type = file.type;
-  let formats = [];
+function showFileCard(file) {
+  const card = document.createElement("div");
+  card.className = "file-card";
 
-  if (type.includes("pdf")) formats = ["jpg", "png", "txt"];
-  else if (type.includes("image")) formats = ["png", "jpg", "webp", "pdf"];
-  else if (type.includes("video")) formats = ["mp3", "gif"];
-  else if (type.includes("audio")) formats = ["mp3", "wav"];
-  else formats = ["pdf"];
+  const info = document.createElement("div");
+  info.className = "file-info";
+  info.innerHTML = `
+    <div class="file-name">${file.name}</div>
+    <div class="file-type">${file.type || "Type inconnu"} — ${(file.size / 1024).toFixed(1)} Ko</div>
+  `;
 
-  options.innerHTML = "<p><strong>Choisis le format de sortie :</strong></p>" +
-    formats.map(f => `<button class="option-btn" data-format="${f}">${f.toUpperCase()}</button>`).join("");
-
-  document.querySelectorAll(".option-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      formatHidden.value = btn.dataset.format;
-      convertForm.classList.remove("hidden");
-    });
+  const btnContainer = document.createElement("div");
+  const formats = suggestFormats(file.type);
+  formats.forEach(fmt => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.textContent = fmt.toUpperCase();
+    btn.onclick = () => convertFile(file, fmt, card);
+    btnContainer.appendChild(btn);
   });
+
+  card.append(info, btnContainer);
+  fileList.appendChild(card);
 }
 
-convertForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  result.innerHTML = "⏳ Conversion en cours...";
+function suggestFormats(type) {
+  if (type.includes("pdf")) return ["jpg", "png", "txt"];
+  if (type.includes("image")) return ["png", "jpg", "webp", "pdf"];
+  if (type.includes("video")) return ["mp3", "gif"];
+  if (type.includes("audio")) return ["mp3", "wav"];
+  return ["pdf"];
+}
+
+async function convertFile(file, format, card) {
+  const buttons = card.querySelectorAll(".option-btn");
+  buttons.forEach(b => b.disabled = true);
+
+  // Progress bar
+  const progressContainer = document.createElement("div");
+  progressContainer.className = "progress-container";
+  const progressBar = document.createElement("div");
+  progressBar.className = "progress-bar";
+  progressContainer.appendChild(progressBar);
+  card.appendChild(progressContainer);
+
+  let progress = 0;
+  const fakeProgress = setInterval(() => {
+    progress = Math.min(progress + Math.random() * 10, 95);
+    progressBar.style.width = `${progress}%`;
+  }, 200);
 
   const formData = new FormData();
-  formData.append("file", fileInput.files[0]);
-  formData.append("format", formatHidden.value);
+  formData.append("file", file);
+  formData.append("format", format);
 
   const res = await fetch("/convert", { method: "POST", body: formData });
+  clearInterval(fakeProgress);
+
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
 
-  result.innerHTML = `<a href="${url}" download="converted_file.${formatHidden.value}">⬇️ Télécharger le fichier converti</a>`;
-});
+  progressBar.style.width = "100%";
+
+  const originalName = file.name.split('.').slice(0, -1).join('.');
+  const newName = `${originalName}.${format}`;
+
+  setTimeout(() => {
+    progressContainer.remove();
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = newName;
+    link.textContent = `⬇️ Télécharger ${newName}`;
+    result.appendChild(link);
+  }, 400);
+}
