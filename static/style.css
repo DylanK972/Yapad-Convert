@@ -60,8 +60,9 @@ header p {
   max-width: 600px;
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px);
-  transition: 0.3s;
   box-shadow: 0 0 40px rgba(123, 47, 247, 0.05);
+  transition: 0.3s;
+  animation: fadeIn 0.6s ease;
 }
 #uploadZone:hover {
   border-color: var(--rose);
@@ -70,7 +71,7 @@ header p {
 
 .upload-btn {
   display: inline-block;
-  background: linear-gradient(145deg, rgba(255,255,255,0.5), rgba(255,255,255,0.15));
+  background: rgba(255,255,255,0.4);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 1rem 2rem;
@@ -91,13 +92,6 @@ header p {
 }
 
 /* === File preview === */
-#fileList {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 2rem;
-}
 .file-card {
   background: var(--glass);
   border: 1px solid var(--border);
@@ -110,7 +104,7 @@ header p {
   width: 90%;
   max-width: 650px;
   backdrop-filter: blur(12px);
-  animation: fadeIn 0.4s ease forwards;
+  animation: fadeIn 0.4s ease;
   transition: 0.3s;
 }
 .file-card:hover {
@@ -127,7 +121,7 @@ header p {
   justify-content: center;
   align-items: center;
 }
-.preview img, .preview video {
+.preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -139,7 +133,7 @@ header p {
   gap: 0.6rem;
 }
 .option-btn {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.2);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 0.6rem 1rem;
@@ -153,13 +147,9 @@ header p {
   background: rgba(123,47,247,0.15);
   transform: translateY(-2px);
 }
-.option-btn.selected {
-  border-color: var(--violet);
-  box-shadow: 0 0 10px rgba(123,47,247,0.3);
-}
 
-/* === Download / Convert buttons === */
-.convert-btn {
+/* === Download button with animation === */
+.download-btn {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid var(--border);
   color: var(--text);
@@ -168,40 +158,42 @@ header p {
   font-weight: 600;
   cursor: pointer;
   backdrop-filter: blur(20px);
+  transition: background 0.3s ease, transform 0.3s ease;
+  animation: fadeIn 0.6s ease;
+}
+.download-btn:hover {
+  background: linear-gradient(90deg, var(--violet), var(--rose));
+  color: white;
+  transform: scale(1.05);
+}
+
+/* === Add file button === */
+.add-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--text);
+  margin-top: 1rem;
   transition: 0.3s;
 }
-.convert-btn:hover {
+.add-btn:hover {
   border-color: var(--violet);
-  transform: scale(1.04);
-  box-shadow: 0 0 15px rgba(123,47,247,0.15);
+  color: var(--violet);
+  transform: translateY(-2px);
 }
 
-/* === Progress bar === */
-.progress-container {
-  width: 100%;
-  max-width: 500px;
-  height: 10px;
-  border-radius: 10px;
-  background: rgba(0,0,0,0.08);
-  margin: 1rem auto;
-  overflow: hidden;
-}
-.progress-bar {
-  height: 100%;
-  background: var(--violet);
-  width: 0%;
-  transition: width 0.3s;
-}
-
-.counter {
-  margin-top: 1rem;
-  color: #666;
-  font-weight: 500;
-}
-
+/* === Fade animation === */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.result-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--violet);
 }
 
 footer {
