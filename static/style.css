@@ -1,7 +1,7 @@
 :root {
   --violet: #7b2ff7;
   --rose: #f107a3;
-  --bg-light: #f7f8fc;
+  --bg-light: #f8f9fc;
   --text: #111;
   --glass: rgba(255, 255, 255, 0.25);
   --border: rgba(0, 0, 0, 0.05);
@@ -27,58 +27,62 @@ header {
   padding: 2rem 1rem 1rem;
 }
 header h1 {
-  font-size: 2.3rem;
+  font-size: 2.4rem;
   font-weight: 700;
   color: var(--violet);
   margin-bottom: 0.3rem;
 }
 header p {
   color: #777;
-  margin: 0 0 1.5rem;
-  font-weight: 500;
+  margin-bottom: 1.5rem;
 }
 .theme-btn {
   border: 1px solid var(--border);
   background: var(--glass);
   color: var(--text);
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
   cursor: pointer;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
 .theme-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 10px rgba(123, 47, 247, 0.25);
+  box-shadow: 0 0 15px rgba(123, 47, 247, 0.25);
 }
 
+/* === Upload zone === */
 #uploadZone {
-  border: 2px dashed var(--border);
-  border-radius: 16px;
+  border: 2px dashed var(--violet);
+  border-radius: 20px;
   padding: 3rem;
   margin: 2rem auto;
   max-width: 600px;
-  background: var(--glass);
-  backdrop-filter: blur(15px);
-  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px);
+  transition: 0.3s;
+  box-shadow: 0 0 40px rgba(123, 47, 247, 0.05);
 }
 #uploadZone:hover {
-  border-color: var(--violet);
-  box-shadow: 0 0 20px rgba(123, 47, 247, 0.15);
+  border-color: var(--rose);
+  box-shadow: 0 0 25px rgba(241, 7, 163, 0.1);
 }
+
 .upload-btn {
   display: inline-block;
-  background: var(--glass);
+  background: linear-gradient(145deg, rgba(255,255,255,0.5), rgba(255,255,255,0.15));
   border: 1px solid var(--border);
   color: var(--text);
   padding: 1rem 2rem;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
   transition: 0.3s;
+  backdrop-filter: blur(20px);
 }
 .upload-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(123,47,247,0.1);
+  box-shadow: 0 0 15px rgba(123,47,247,0.15);
   transform: scale(1.03);
 }
 .hint {
@@ -97,7 +101,7 @@ header p {
 .file-card {
   background: var(--glass);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -128,24 +132,6 @@ header p {
   height: 100%;
   object-fit: cover;
 }
-.preview i {
-  font-size: 2rem;
-  opacity: 0.7;
-}
-
-.file-info {
-  flex: 1;
-  text-align: left;
-}
-.file-name {
-  font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 0.3rem;
-}
-.file-type {
-  font-size: 0.9rem;
-  color: #888;
-}
 
 /* === Format buttons === */
 .format-options {
@@ -153,22 +139,41 @@ header p {
   gap: 0.6rem;
 }
 .option-btn {
-  background: var(--glass);
+  background: rgba(255,255,255,0.15);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 0.6rem 1rem;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
 .option-btn:hover {
-  background: rgba(123,47,247,0.1);
+  background: rgba(123,47,247,0.15);
   transform: translateY(-2px);
 }
 .option-btn.selected {
   border-color: var(--violet);
   box-shadow: 0 0 10px rgba(123,47,247,0.3);
+}
+
+/* === Download / Convert buttons === */
+.convert-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(20px);
+  transition: 0.3s;
+}
+.convert-btn:hover {
+  border-color: var(--violet);
+  transform: scale(1.04);
+  box-shadow: 0 0 15px rgba(123,47,247,0.15);
 }
 
 /* === Progress bar === */
@@ -188,26 +193,6 @@ header p {
   transition: width 0.3s;
 }
 
-/* === Download button === */
-#result a {
-  display: inline-block;
-  padding: 1rem 2rem;
-  border-radius: 10px;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  color: var(--text);
-  text-decoration: none;
-  font-weight: 600;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s;
-}
-#result a:hover {
-  transform: scale(1.05);
-  border-color: var(--violet);
-  box-shadow: 0 0 15px rgba(123,47,247,0.2);
-}
-
-/* === Counter === */
 .counter {
   margin-top: 1rem;
   color: #666;
