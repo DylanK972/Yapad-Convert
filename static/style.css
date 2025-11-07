@@ -1,25 +1,23 @@
 :root {
   --violet: #7b2ff7;
   --rose: #f107a3;
-  --white: #ffffff;
-  --dark-bg: #0f0f12;
-  --glass: rgba(255, 255, 255, 0.15);
-  --border: rgba(255, 255, 255, 0.25);
+  --bg-light: #f7f8fc;
   --text: #111;
+  --glass: rgba(255, 255, 255, 0.25);
+  --border: rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="dark"] {
-  --white: rgba(25, 25, 30, 0.8);
-  --text: #f2f2f2;
+  --bg-light: #0f0f12;
+  --text: #f1f1f1;
   --glass: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.15);
-  background: var(--dark-bg);
+  --border: rgba(255, 255, 255, 0.1);
 }
 
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  background: #f7f8fc;
+  background: var(--bg-light);
   color: var(--text);
   text-align: center;
   transition: background 0.4s ease, color 0.4s ease;
@@ -29,16 +27,15 @@ header {
   padding: 2rem 1rem 1rem;
 }
 header h1 {
-  font-size: 2.4rem;
+  font-size: 2.3rem;
+  font-weight: 700;
   color: var(--violet);
   margin-bottom: 0.3rem;
 }
-header span {
-  color: var(--rose);
-}
 header p {
-  color: #555;
-  margin: 0 0 1rem;
+  color: #777;
+  margin: 0 0 1.5rem;
+  font-weight: 500;
 }
 .theme-btn {
   border: 1px solid var(--border);
@@ -48,25 +45,26 @@ header p {
   border-radius: 10px;
   cursor: pointer;
   backdrop-filter: blur(10px);
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 .theme-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(123, 47, 247, 0.25);
 }
 
 #uploadZone {
   border: 2px dashed var(--border);
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 3rem;
   margin: 2rem auto;
-  max-width: 550px;
+  max-width: 600px;
   background: var(--glass);
   backdrop-filter: blur(15px);
-  transition: 0.3s;
+  transition: all 0.3s;
 }
 #uploadZone:hover {
   border-color: var(--violet);
-  box-shadow: 0 0 25px rgba(123, 47, 247, 0.2);
+  box-shadow: 0 0 20px rgba(123, 47, 247, 0.15);
 }
 .upload-btn {
   display: inline-block;
@@ -88,6 +86,7 @@ header p {
   margin-top: 0.8rem;
 }
 
+/* === File preview === */
 #fileList {
   display: flex;
   flex-direction: column;
@@ -95,7 +94,6 @@ header p {
   align-items: center;
   margin-bottom: 2rem;
 }
-
 .file-card {
   background: var(--glass);
   border: 1px solid var(--border);
@@ -106,11 +104,37 @@ header p {
   justify-content: space-between;
   gap: 1rem;
   width: 90%;
-  max-width: 600px;
+  max-width: 650px;
   backdrop-filter: blur(12px);
   animation: fadeIn 0.4s ease forwards;
+  transition: 0.3s;
 }
+.file-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 0 12px rgba(123, 47, 247, 0.1);
+}
+.preview {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.preview img, .preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.preview i {
+  font-size: 2rem;
+  opacity: 0.7;
+}
+
 .file-info {
+  flex: 1;
   text-align: left;
 }
 .file-name {
@@ -123,61 +147,67 @@ header p {
   color: #888;
 }
 
-.option-btn, .convert-btn {
-  border: 1px solid var(--border);
+/* === Format buttons === */
+.format-options {
+  display: flex;
+  gap: 0.6rem;
+}
+.option-btn {
   background: var(--glass);
+  border: 1px solid var(--border);
   color: var(--text);
-  padding: 0.8rem 1.4rem;
+  padding: 0.6rem 1rem;
   border-radius: 10px;
-  cursor: pointer;
   font-weight: 600;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
-.option-btn:hover, .convert-btn:hover {
-  background: rgba(255,255,255,0.25);
+.option-btn:hover {
+  background: rgba(123,47,247,0.1);
   transform: translateY(-2px);
 }
 .option-btn.selected {
   border-color: var(--violet);
-  box-shadow: 0 0 10px rgba(123,47,247,0.4);
+  box-shadow: 0 0 10px rgba(123,47,247,0.3);
 }
 
+/* === Progress bar === */
 .progress-container {
   width: 100%;
   max-width: 500px;
   height: 10px;
   border-radius: 10px;
-  background: rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.08);
   margin: 1rem auto;
   overflow: hidden;
 }
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--violet), var(--rose));
+  background: var(--violet);
   width: 0%;
   transition: width 0.3s;
 }
 
-#result {
-  margin-top: 1.5rem;
-}
+/* === Download button === */
 #result a {
   display: inline-block;
   padding: 1rem 2rem;
-  border-radius: 12px;
+  border-radius: 10px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--text);
   text-decoration: none;
-  color: white;
-  background: linear-gradient(90deg, var(--violet), var(--rose));
   font-weight: 600;
-  transition: 0.3s;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s;
 }
 #result a:hover {
-  transform: scale(1.04);
+  transform: scale(1.05);
+  border-color: var(--violet);
+  box-shadow: 0 0 15px rgba(123,47,247,0.2);
 }
 
-#actions {
-  margin-bottom: 2rem;
-}
+/* === Counter === */
 .counter {
   margin-top: 1rem;
   color: #666;
@@ -190,8 +220,7 @@ header p {
 }
 
 footer {
-  margin: 2rem 0;
+  margin: 3rem 0 1rem;
   font-size: 0.9rem;
-  color: #777;
-  transition: color 0.4s;
+  color: #888;
 }
