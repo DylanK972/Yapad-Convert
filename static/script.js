@@ -3,12 +3,19 @@ const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
 const result = document.getElementById("result");
 const themeToggle = document.getElementById("themeToggle");
+const convertAllBtn = document.getElementById("convertAll");
+const actions = document.getElementById("actions");
+const counter = document.getElementById("counter");
+
+let uploadedFiles = [];
+let convertedCount = 0;
 
 // === Mode clair/sombre ===
 themeToggle.addEventListener("click", () => {
   const current = document.body.dataset.theme;
   document.body.dataset.theme = current === "dark" ? "light" : "dark";
-  themeToggle.textContent = current === "dark" ? "🌙 Mode sombre" : "☀️ Mode clair";
+  themeToggle.textContent =
+    current === "dark" ? "🌙 Mode sombre" : "☀️ Mode clair";
 });
 
 // === Drag & drop ===
@@ -23,8 +30,11 @@ function handleFiles(files) {
   if (!files.length) return;
   uploadZone.classList.add("hidden");
   fileList.classList.remove("hidden");
+  actions.classList.remove("hidden");
   result.innerHTML = "";
-  Array.from(files).forEach(showFileCard);
+  uploadedFiles = Array.from(files);
+  fileList.innerHTML = "";
+  uploadedFiles.forEach(showFileCard);
 }
 
 function showFileCard(file) {
@@ -64,7 +74,6 @@ async function convertFile(file, format, card) {
   const buttons = card.querySelectorAll(".option-btn");
   buttons.forEach(b => b.disabled = true);
 
-  // Progress bar
   const progressContainer = document.createElement("div");
   progressContainer.className = "progress-container";
   const progressBar = document.createElement("div");
@@ -89,7 +98,6 @@ async function convertFile(file, format, card) {
   const url = URL.createObjectURL(blob);
 
   progressBar.style.width = "100%";
-
   const originalName = file.name.split('.').slice(0, -1).join('.');
   const newName = `${originalName}.${format}`;
 
@@ -99,6 +107,26 @@ async function convertFile(file, format, card) {
     link.href = url;
     link.download = newName;
     link.textContent = `⬇️ Télécharger ${newName}`;
+    link.className = "fade-in";
     result.appendChild(link);
+    updateCounter();
   }, 400);
+}
+
+convertAllBtn.addEventListener("click", async () => {
+  for (const file of uploadedFiles) {
+    const format = suggestFormats(file.type)[0]; // premier format proposé
+    const card = Array.from(fileList.children).find(c =>
+      c.querySelector(".file-name").textContent === file.name
+    );
+    await convertFile(file, format, card);
+  }
+});
+
+function updateCounter() {
+  convertedCount++;
+  counter.textContent =
+    convertedCount > 1
+      ? `${convertedCount} fichiers convertis`
+      : `${convertedCount} fichier converti`;
 }
