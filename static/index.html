@@ -9,35 +9,22 @@
 <body>
   <header>
     <h1>🌀 <span>Yapad’Convertisseur</span></h1>
-    <p>Le convertisseur malin du Studio Yapad — choisis ton fichier, on devine le reste 🔮</p>
+    <p>Le convertisseur de fichiers du Studio Yapad</p>
+
+    <button id="themeToggle" class="theme-btn">🌙 Mode sombre</button>
   </header>
 
   <main id="uploadZone">
-    <label for="fileInput" class="upload-btn">📁 Choisir un fichier</label>
-    <input id="fileInput" type="file" hidden />
-    <p class="hint">ou dépose ton fichier ici</p>
+    <label for="fileInput" class="upload-btn">📁 Choisir des fichiers</label>
+    <input id="fileInput" type="file" hidden multiple />
+    <p class="hint">ou dépose tes fichiers ici</p>
   </main>
 
-  <section id="fileInfo" class="hidden">
-    <div class="file-card">
-      <div class="preview" id="preview"></div>
-      <div class="details">
-        <h2 id="fileName"></h2>
-        <p id="fileType"></p>
-      </div>
-    </div>
+  <section id="fileList" class="hidden"></section>
 
-    <div id="options"></div>
+  <div id="result"></div>
 
-    <form id="convertForm" class="hidden">
-      <input type="hidden" name="format" id="formatHidden" />
-      <button type="submit" class="convert-btn">Convertir maintenant</button>
-    </form>
-
-    <div id="result"></div>
-  </section>
-
-  <footer>© 2025 Studio Yapad — Outil interne pour créateurs exigeants 💾</footer>
+  <footer>© 2025 Studio Yapad</footer>
 
   <script src="/static/script.js"></script>
 </body>
