@@ -15,19 +15,27 @@ form.addEventListener("submit", async (e) => {
 
     if (!res.ok) throw new Error("Erreur de conversion");
 
-    // Récupère le nom du fichier pour téléchargement
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
+
     const link = document.createElement("a");
     link.href = url;
 
-    const contentDisposition = res.headers.get("content-disposition");
-    const filename = contentDisposition
-      ? contentDisposition.split("filename=")[1].replace(/"/g, "")
-      : "converted_file";
+    // Sécurise la récupération du nom
+    const cd = res.headers.get("content-disposition");
+    let filename = "converted_file.png";
+
+    if (cd && cd.includes("filename=")) {
+      try {
+        filename = cd.split("filename=")[1].replace(/"/g, "");
+      } catch (err) {
+        console.warn("Erreur lecture filename:", err);
+      }
+    }
 
     link.download = filename;
     link.textContent = "⬇️ Télécharger le fichier converti";
+
     result.innerHTML = "";
     result.appendChild(link);
   } catch (err) {
