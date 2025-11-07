@@ -3,25 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yapad Convert</title>
+  <title>Studio Yapad Convert</title>
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>🌀 Yapad Convert</h1>
-    <p>Convertis tes fichiers images en ligne, gratuitement.</p>
+  <div class="wrapper">
+    <header>
+      <h1>🌀 <span>Studio Yapad Convert</span></h1>
+      <p>Convertis facilement tes fichiers images en ligne — outil interne de l’équipe Yapad ⚡</p>
+    </header>
 
-    <form id="convertForm">
-      <input type="file" name="file" accept="image/*" required />
-      <select name="format" required>
-        <option value="png">PNG</option>
-        <option value="jpg">JPG</option>
-        <option value="webp">WEBP</option>
-      </select>
-      <button type="submit">Convertir</button>
-    </form>
+    <main class="card">
+      <div class="icon-area">
+        <div class="icon">🖼️</div>
+      </div>
+      <h2>Convertisseur d’images</h2>
+      <p class="subtitle">Glisse ton image ou choisis-la, puis sélectionne le format de sortie.</p>
 
-    <div id="result"></div>
+      <form id="convertForm">
+        <label class="upload">
+          <input type="file" name="file" accept="image/*" required />
+          <span>📁 Choisir un fichier</span>
+        </label>
+
+        <select name="format" required>
+          <option value="png">PNG</option>
+          <option value="jpg">JPG</option>
+          <option value="webp">WEBP</option>
+        </select>
+
+        <button type="submit">Convertir maintenant</button>
+      </form>
+
+      <div id="result"></div>
+    </main>
+
+    <footer>
+      <p>© 2025 Studio Yapad – Créé avec ❤️ par l’équipe</p>
+    </footer>
   </div>
 
   <script src="/static/script.js"></script>
