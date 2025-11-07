@@ -1,14 +1,14 @@
 const uploadZone = document.getElementById("uploadZone");
 const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
-const result = document.getElementById("result");
 const themeToggle = document.getElementById("themeToggle");
-const convertAllBtn = document.getElementById("convertAll");
+const downloadAllBtn = document.getElementById("downloadAll");
 const actions = document.getElementById("actions");
 const counter = document.getElementById("counter");
 
 let uploadedFiles = [];
 let convertedCount = 0;
+let downloadLinks = [];
 
 // === Mode clair/sombre ===
 themeToggle.addEventListener("click", () => {
@@ -30,10 +30,11 @@ function handleFiles(files) {
   uploadZone.classList.add("hidden");
   fileList.classList.remove("hidden");
   actions.classList.remove("hidden");
-  result.innerHTML = "";
   uploadedFiles = Array.from(files);
   fileList.innerHTML = "";
+  downloadLinks = [];
   uploadedFiles.forEach(showFileCard);
+  updateDownloadButton();
 }
 
 function showFileCard(file) {
@@ -42,8 +43,6 @@ function showFileCard(file) {
 
   const preview = document.createElement("div");
   preview.className = "preview";
-
-  // === Preview dynamique ===
   if (file.type.startsWith("image/")) {
     const img = document.createElement("img");
     const reader = new FileReader();
@@ -51,19 +50,16 @@ function showFileCard(file) {
     reader.readAsDataURL(file);
     preview.appendChild(img);
   } else if (file.type.includes("pdf")) {
-    preview.innerHTML = `<i>📄</i>`;
+    preview.textContent = "📄";
   } else if (file.type.startsWith("video/")) {
     const video = document.createElement("video");
     video.src = URL.createObjectURL(file);
     video.muted = true;
-    video.playsInline = true;
-    video.autoplay = true;
     video.loop = true;
+    video.play();
     preview.appendChild(video);
-  } else if (file.type.startsWith("audio/")) {
-    preview.innerHTML = `<i>🎵</i>`;
   } else {
-    preview.innerHTML = `<i>📦</i>`;
+    preview.textContent = "📦";
   }
 
   const info = document.createElement("div");
@@ -73,10 +69,9 @@ function showFileCard(file) {
     <div class="file-type">${file.type || "Type inconnu"} — ${(file.size / 1024).toFixed(1)} Ko</div>
   `;
 
-  const formats = suggestFormats(file.type);
   const btnContainer = document.createElement("div");
   btnContainer.className = "format-options";
-  formats.forEach(fmt => {
+  suggestFormats(file.type).forEach(fmt => {
     const btn = document.createElement("button");
     btn.className = "option-btn";
     btn.textContent = fmt.toUpperCase();
@@ -126,33 +121,36 @@ async function convertFile(file, format, card) {
 
   const originalName = file.name.split('.').slice(0, -1).join('.');
   const newName = `${originalName}.${format}`;
+  downloadLinks.push({ url, newName });
+  updateDownloadButton();
 
   setTimeout(() => {
     progressContainer.remove();
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = newName;
-    link.textContent = `⬇️ Télécharger ${newName}`;
-    result.innerHTML = "";
-    result.appendChild(link);
-    updateCounter();
+    convertedCount++;
+    counter.textContent = `${convertedCount} fichier${convertedCount > 1 ? "s" : ""} converti${convertedCount > 1 ? "s" : ""}`;
   }, 400);
 }
 
-convertAllBtn.addEventListener("click", async () => {
-  for (const file of uploadedFiles) {
-    const format = suggestFormats(file.type)[0];
-    const card = Array.from(fileList.children).find(c =>
-      c.querySelector(".file-name").textContent === file.name
-    );
-    await convertFile(file, format, card);
+function updateDownloadButton() {
+  if (uploadedFiles.length <= 1) {
+    downloadAllBtn.textContent = "Télécharger";
+    downloadAllBtn.onclick = () => {
+      if (downloadLinks[0]) {
+        const a = document.createElement("a");
+        a.href = downloadLinks[0].url;
+        a.download = downloadLinks[0].newName;
+        a.click();
+      }
+    };
+  } else {
+    downloadAllBtn.textContent = "Tout télécharger";
+    downloadAllBtn.onclick = () => {
+      downloadLinks.forEach(link => {
+        const a = document.createElement("a");
+        a.href = link.url;
+        a.download = link.newName;
+        a.click();
+      });
+    };
   }
-});
-
-function updateCounter() {
-  convertedCount++;
-  counter.textContent =
-    convertedCount > 1
-      ? `${convertedCount} fichiers convertis`
-      : `${convertedCount} fichier converti`;
 }
