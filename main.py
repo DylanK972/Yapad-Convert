@@ -7,8 +7,7 @@ import io, os, uuid
 app = FastAPI(title="Yapad Convert")
 
 # Dossier temporaire
-if not os.path.exists("tmp"):
-    os.makedirs("tmp")
+os.makedirs("tmp", exist_ok=True)
 
 # Servir les fichiers statiques (front)
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -26,16 +25,20 @@ async def convert_image(file: UploadFile, format: str = Form("png")):
         image = Image.open(io.BytesIO(contents))
 
         # Générer un nom unique
+        base_name = file.filename.rsplit('.', 1)[0]
         output_filename = f"{uuid.uuid4().hex}.{format.lower()}"
         output_path = os.path.join("tmp", output_filename)
 
         # Sauvegarder l’image convertie
         image.save(output_path, format=format.upper())
 
+        # Nom propre pour le téléchargement
+        download_name = f"{base_name}.{format.lower()}"
+
         return FileResponse(
             output_path,
-            filename=f"{file.filename.split('.')[0]}.{format.lower()}",
-            media_type=f"image/{format.lower()}"
+            media_type=f"image/{format.lower()}",
+            headers={"Content-Disposition": f'attachment; filename="{download_name}"'}
         )
     except Exception as e:
         return {"error": str(e)}
