@@ -22,11 +22,12 @@ uploadZone.addEventListener("drop", (e) => {
   handleFiles(e.dataTransfer.files);
 });
 fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+addMoreBtn.addEventListener("click", resetToUpload);
 
-addMoreBtn.addEventListener("click", () => {
+function resetToUpload() {
   result.classList.add("hidden");
   uploadZone.classList.remove("hidden");
-});
+}
 
 function handleFiles(files) {
   if (!files.length) return;
@@ -50,9 +51,7 @@ function showFileCard(file) {
     reader.onload = () => (img.src = reader.result);
     reader.readAsDataURL(file);
     preview.appendChild(img);
-  } else {
-    preview.textContent = "📄";
-  }
+  } else preview.textContent = "📄";
 
   const info = document.createElement("div");
   info.className = "file-info";
@@ -78,8 +77,6 @@ function showFileCard(file) {
 function suggestFormats(type) {
   if (type.includes("pdf")) return ["jpg", "png"];
   if (type.includes("image")) return ["png", "jpg", "webp", "pdf"];
-  if (type.includes("video")) return ["mp3", "gif"];
-  if (type.includes("audio")) return ["mp3", "wav"];
   return ["pdf"];
 }
 
@@ -91,7 +88,7 @@ async function convertFile(file, format) {
   formData.append("file", file);
   formData.append("format", format);
 
-  const res = await fetch("/convert?quality=100", { method: "POST", body: formData });
+  const res = await fetch("/convert", { method: "POST", body: formData });
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
 
@@ -102,7 +99,7 @@ async function convertFile(file, format) {
   const link = document.createElement("a");
   link.href = url;
   link.download = newName;
-  link.textContent = "⬇️ Télécharger";
+  link.textContent = "Télécharger";
   link.className = "download-btn";
 
   convertedFiles.appendChild(link);
