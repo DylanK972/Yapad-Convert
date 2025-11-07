@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yapad Convert</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🌀 Yapad Convert</h1>
+    <p>Convertis tes fichiers images en ligne, gratuitement.</p>
+
+    <form id="convertForm">
+      <input type="file" name="file" accept="image/*" required />
+      <select name="format" required>
+        <option value="png">PNG</option>
+        <option value="jpg">JPG</option>
+        <option value="webp">WEBP</option>
+      </select>
+      <button type="submit">Convertir</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
