@@ -3,45 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Studio Yapad Convert</title>
+  <title>Yapad’Convertisseur</title>
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-  <div class="wrapper">
-    <header>
-      <h1>🌀 <span>Studio Yapad Convert</span></h1>
-      <p>Convertis facilement tes fichiers images en ligne — outil interne de l’équipe Yapad ⚡</p>
-    </header>
+  <header>
+    <h1>🌀 <span>Yapad’Convertisseur</span></h1>
+    <p>Le convertisseur malin du Studio Yapad — choisis ton fichier, on devine le reste 🔮</p>
+  </header>
 
-    <main class="card">
-      <div class="icon-area">
-        <div class="icon">🖼️</div>
+  <main id="uploadZone">
+    <label for="fileInput" class="upload-btn">📁 Choisir un fichier</label>
+    <input id="fileInput" type="file" hidden />
+    <p class="hint">ou dépose ton fichier ici</p>
+  </main>
+
+  <section id="fileInfo" class="hidden">
+    <div class="file-card">
+      <div class="preview" id="preview"></div>
+      <div class="details">
+        <h2 id="fileName"></h2>
+        <p id="fileType"></p>
       </div>
-      <h2>Convertisseur d’images</h2>
-      <p class="subtitle">Glisse ton image ou choisis-la, puis sélectionne le format de sortie.</p>
+    </div>
 
-      <form id="convertForm">
-        <label class="upload">
-          <input type="file" name="file" accept="image/*" required />
-          <span>📁 Choisir un fichier</span>
-        </label>
+    <div id="options"></div>
 
-        <select name="format" required>
-          <option value="png">PNG</option>
-          <option value="jpg">JPG</option>
-          <option value="webp">WEBP</option>
-        </select>
+    <form id="convertForm" class="hidden">
+      <input type="hidden" name="format" id="formatHidden" />
+      <button type="submit" class="convert-btn">Convertir maintenant</button>
+    </form>
 
-        <button type="submit">Convertir maintenant</button>
-      </form>
+    <div id="result"></div>
+  </section>
 
-      <div id="result"></div>
-    </main>
-
-    <footer>
-      <p>© 2025 Studio Yapad – Créé avec ❤️ par l’équipe</p>
-    </footer>
-  </div>
+  <footer>© 2025 Studio Yapad — Outil interne pour créateurs exigeants 💾</footer>
 
   <script src="/static/script.js"></script>
 </body>
