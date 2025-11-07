@@ -12,10 +12,9 @@ let convertedCount = 0;
 
 // === Mode clair/sombre ===
 themeToggle.addEventListener("click", () => {
-  const current = document.body.dataset.theme;
-  document.body.dataset.theme = current === "dark" ? "light" : "dark";
-  themeToggle.textContent =
-    current === "dark" ? "🌙 Mode sombre" : "☀️ Mode clair";
+  const isDark = document.body.dataset.theme === "dark";
+  document.body.dataset.theme = isDark ? "light" : "dark";
+  themeToggle.textContent = isDark ? "Mode sombre" : "Mode clair";
 });
 
 // === Drag & drop ===
@@ -41,6 +40,32 @@ function showFileCard(file) {
   const card = document.createElement("div");
   card.className = "file-card";
 
+  const preview = document.createElement("div");
+  preview.className = "preview";
+
+  // === Preview dynamique ===
+  if (file.type.startsWith("image/")) {
+    const img = document.createElement("img");
+    const reader = new FileReader();
+    reader.onload = () => (img.src = reader.result);
+    reader.readAsDataURL(file);
+    preview.appendChild(img);
+  } else if (file.type.includes("pdf")) {
+    preview.innerHTML = `<i>📄</i>`;
+  } else if (file.type.startsWith("video/")) {
+    const video = document.createElement("video");
+    video.src = URL.createObjectURL(file);
+    video.muted = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    video.loop = true;
+    preview.appendChild(video);
+  } else if (file.type.startsWith("audio/")) {
+    preview.innerHTML = `<i>🎵</i>`;
+  } else {
+    preview.innerHTML = `<i>📦</i>`;
+  }
+
   const info = document.createElement("div");
   info.className = "file-info";
   info.innerHTML = `
@@ -48,8 +73,9 @@ function showFileCard(file) {
     <div class="file-type">${file.type || "Type inconnu"} — ${(file.size / 1024).toFixed(1)} Ko</div>
   `;
 
-  const btnContainer = document.createElement("div");
   const formats = suggestFormats(file.type);
+  const btnContainer = document.createElement("div");
+  btnContainer.className = "format-options";
   formats.forEach(fmt => {
     const btn = document.createElement("button");
     btn.className = "option-btn";
@@ -58,12 +84,12 @@ function showFileCard(file) {
     btnContainer.appendChild(btn);
   });
 
-  card.append(info, btnContainer);
+  card.append(preview, info, btnContainer);
   fileList.appendChild(card);
 }
 
 function suggestFormats(type) {
-  if (type.includes("pdf")) return ["jpg", "png", "txt"];
+  if (type.includes("pdf")) return ["jpg", "png"];
   if (type.includes("image")) return ["png", "jpg", "webp", "pdf"];
   if (type.includes("video")) return ["mp3", "gif"];
   if (type.includes("audio")) return ["mp3", "wav"];
@@ -96,8 +122,8 @@ async function convertFile(file, format, card) {
 
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
-
   progressBar.style.width = "100%";
+
   const originalName = file.name.split('.').slice(0, -1).join('.');
   const newName = `${originalName}.${format}`;
 
@@ -107,7 +133,7 @@ async function convertFile(file, format, card) {
     link.href = url;
     link.download = newName;
     link.textContent = `⬇️ Télécharger ${newName}`;
-    link.className = "fade-in";
+    result.innerHTML = "";
     result.appendChild(link);
     updateCounter();
   }, 400);
@@ -115,7 +141,7 @@ async function convertFile(file, format, card) {
 
 convertAllBtn.addEventListener("click", async () => {
   for (const file of uploadedFiles) {
-    const format = suggestFormats(file.type)[0]; // premier format proposé
+    const format = suggestFormats(file.type)[0];
     const card = Array.from(fileList.children).find(c =>
       c.querySelector(".file-name").textContent === file.name
     );
